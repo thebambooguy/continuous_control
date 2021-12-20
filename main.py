@@ -10,7 +10,7 @@ import yaml
 
 from unityagents import UnityEnvironment
 
-from algorithms import ddpg
+from ddpg import ddpg
 from ddpg_agent import DDPGAgent
 from util import get_information_about_env, configure_logging, close_logging
 from exploration_noise import OUNoise
@@ -32,7 +32,7 @@ def create_and_parse_args(args=None):
     parser.add_argument("--max_t", type=int, default=1500, help='Maximum number of timesteps per episode')
     parser.add_argument("--hidden_layer_size", type=int, default=128, help='Number of neurons in hidden layer')
     parser.add_argument("--gamma", type=float, default=0.99, help='Discount rate')
-    parser.add_argument("--results_dir", type=Path, default='results', help='Results dir where results will be stored')
+    parser.add_argument("--results_dir", type=Path, default='results/temp', help='Results dir where results will be stored')
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args(args)
     return args
