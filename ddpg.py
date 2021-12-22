@@ -1,12 +1,8 @@
-import logging
 from collections import deque
 from pathlib import Path
 
 import numpy as np
 import torch
-
-
-log = logging.getLogger(__name__)
 
 
 def ddpg(env, brain_name, result_dir, agent, n_episodes=200, max_t=500):
@@ -29,7 +25,7 @@ def ddpg(env, brain_name, result_dir, agent, n_episodes=200, max_t=500):
         state = env_info.vector_observations[0]
         score = 0
         for t in range(max_t):
-            action = agent.get_action(state)  # select action
+            action = agent.act(state)  # select action
             env_info = env.step(action)[brain_name]     # send the action to the environment
             next_state, reward, done = env_info.vector_observations[0], env_info.rewards[0], env_info.local_done[0]
             agent.step(state, action, reward, next_state, done)
@@ -46,6 +42,7 @@ def ddpg(env, brain_name, result_dir, agent, n_episodes=200, max_t=500):
             print(f'\rEpisode: {i_episode}\tAverage_score: {np.mean(scores_window)}')
         if np.mean(scores_window) >= 30.0:
             print(f'\nEnvironment solved in: {i_episode - 100} episodes!\tAverage_score: {np.mean(scores_window)}')
-            torch.save(agent.q_network_local.state_dict(), result_dir / 'navigation_model_solution.pth')
+            torch.save(agent.actor_local.state_dict(), result_dir / 'actor_model_solution.pth')
+            torch.save(agent.critic_local.state_dict(), result_dir / 'critic_model_solution.pth')
             break
     return scores

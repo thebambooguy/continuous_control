@@ -1,5 +1,4 @@
 import argparse
-import logging
 
 from pathlib import Path
 
@@ -11,28 +10,26 @@ import yaml
 from unityagents import UnityEnvironment
 
 from ddpg import ddpg
-from ddpg_agent import DDPGAgent
-from util import get_information_about_env, configure_logging, close_logging
-from exploration_noise import OUNoise
+from ddpg_agent import Agent
+from util import get_information_about_env
 
-log = logging.getLogger(__name__)
 
 ENV_PATH = './Reacher_Linux/Reacher.x86_64'
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-BUFFER_SIZE = int(1e-7)    # replay buffer size
-BATCH_SIZE = 128
-ACTOR_LR = 5e-4
-CRITIC_LR = 5e-4
-TAU = 1e-3
 
 
 def create_and_parse_args(args=None):
     parser = argparse.ArgumentParser(description='Continuous Control')
     parser.add_argument("--n_iterations", type=int, default=3000, help='Maximum number of training iteraions')
     parser.add_argument("--max_t", type=int, default=1500, help='Maximum number of timesteps per episode')
-    parser.add_argument("--hidden_layer_size", type=int, default=128, help='Number of neurons in hidden layer')
+    parser.add_argument("--actor_lr", type=int, default=2e-4, help='Number of neurons in hidden layer')
+    parser.add_argument("--critic_lr", type=float, default=2e-4, help='Discount rate')
+    parser.add_argument("--weight_decay", type=int, default=0, help='Number of neurons in hidden layer')
+    parser.add_argument("--buffer_size", type=int, default=int(1e7), help='Discount rate')
+    parser.add_argument("--batch_size", type=int, default=256, help='Discount rate')
     parser.add_argument("--gamma", type=float, default=0.99, help='Discount rate')
-    parser.add_argument("--results_dir", type=Path, default='results/temp', help='Results dir where results will be stored')
+    parser.add_argument("--tau", type=float, default=1e-3, help='Discount rate')
+    parser.add_argument("--results_dir", type=Path, default='results/1_agent_env', help='Results dir where results will be stored')
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args(args)
     return args
@@ -40,7 +37,6 @@ def create_and_parse_args(args=None):
 
 if __name__ == '__main__':
     args = create_and_parse_args()
-    configure_logging(args.results_dir)
 
     env = UnityEnvironment(file_name=ENV_PATH)
     # get the default brain
@@ -51,9 +47,8 @@ if __name__ == '__main__':
     env_info = env.reset(train_mode=True)[brain_name]
     num_agents, action_size, state_size = get_information_about_env(env_info, brain)
 
-    agent = DDPGAgent(state_size, action_size, hidden_dims=args.hidden_layer_size, batch_size=BATCH_SIZE,
-                      buffer_size=BUFFER_SIZE, actor_lr=ACTOR_LR, critic_lr=CRITIC_LR, gamma=args.gamma, tau=TAU,
-                      noise=OUNoise(action_size, args.seed), device=DEVICE, seed=args.seed)
+    agent = Agent(state_size, action_size, args.actor_lr, args.critic_lr, args.weight_decay, args.buffer_size,
+                  args.batch_size, args.gamma, args.tau, DEVICE, args.seed)
 
     scores = ddpg(env, brain_name, args.results_dir, agent, args.n_iterations, args.max_t)
 
@@ -68,4 +63,3 @@ if __name__ == '__main__':
     with open(args.results_dir / "args.yaml", 'w') as outfile:
         yaml.dump(vars(args), outfile, default_flow_style=False)
 
-    close_logging()
