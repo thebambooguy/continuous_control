@@ -7,44 +7,29 @@ import torch
 
 
 class ReplayBuffer:
-    """Fixed-size buffer to store experience tuples"""
+    """Fixed-size buffer to store experience tuples."""
 
     def __init__(self, action_size, buffer_size, batch_size, device, seed):
+        """Initialize a ReplayBuffer object.
+        Params
+        ======
+            buffer_size (int): maximum size of buffer
+            batch_size (int): size of each training batch
         """
-        Initialize a ReplayBuffer object.
-        :param int action_size: Dimension of each action
-        :param int buffer_size: Maximum size of buffer
-        :param int batch_size: size of each training batch
-        :param torch.device device: GPU or CPU
-        :param int seed: random seed
-        """
-
         self.action_size = action_size
-        self.memory = deque(maxlen=buffer_size)
+        self.memory = deque(maxlen=buffer_size)  # internal memory (deque)
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
         self.device = device
-        random.seed(seed)
+        self.seed = random.seed(seed)
 
     def add(self, state, action, reward, next_state, done):
-        """
-        Add a new experience to memory.
-        :param int state:  Value of current state
-        :param int action: Action chosen by the agent
-        :param int reward: Reward after choosing action
-        :param int next_state: Value of next state
-        :param int done: Whether episode is finished
-        """
-
+        """Add a new experience to memory."""
         e = self.experience(state, action, reward, next_state, done)
         self.memory.append(e)
 
     def sample(self):
-        """
-        Randomly sample a batch of experiences from memory
-        :return tuple: (states, actions, rewards, next_states, dones)
-        """
-
+        """Randomly sample a batch of experiences from memory."""
         experiences = random.sample(self.memory, k=self.batch_size)
 
         states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(self.device)
@@ -56,9 +41,5 @@ class ReplayBuffer:
         return states, actions, rewards, next_states, dones
 
     def __len__(self):
-        """
-        Return the current size of internal memory
-        :return int: Size of internal memory
-        """
-
+        """Return the current size of internal memory."""
         return len(self.memory)
