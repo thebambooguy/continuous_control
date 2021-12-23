@@ -22,14 +22,14 @@ def create_and_parse_args(args=None):
     parser = argparse.ArgumentParser(description='Continuous Control')
     parser.add_argument("--n_iterations", type=int, default=3000, help='Maximum number of training iteraions')
     parser.add_argument("--max_t", type=int, default=1500, help='Maximum number of timesteps per episode')
-    parser.add_argument("--actor_lr", type=int, default=2e-4, help='Number of neurons in hidden layer')
-    parser.add_argument("--critic_lr", type=float, default=2e-4, help='Discount rate')
+    parser.add_argument("--actor_lr", type=int, default=2e-4, help='Actor learning rate')
+    parser.add_argument("--critic_lr", type=float, default=2e-4, help='Critic learning rate')
     parser.add_argument("--weight_decay", type=int, default=0, help='Number of neurons in hidden layer')
-    parser.add_argument("--buffer_size", type=int, default=int(1e7), help='Discount rate')
-    parser.add_argument("--batch_size", type=int, default=256, help='Discount rate')
-    parser.add_argument("--gamma", type=float, default=0.99, help='Discount rate')
-    parser.add_argument("--tau", type=float, default=1e-3, help='Discount rate')
-    parser.add_argument("--results_dir", type=Path, default='results/1_agent_env', help='Results dir where results will be stored')
+    parser.add_argument("--buffer_size", type=int, default=int(1e7), help='Weight decay for critic optimizer')
+    parser.add_argument("--batch_size", type=int, default=256, help='Batch Size')
+    parser.add_argument("--gamma", type=float, default=0.99, help='Discount factor')
+    parser.add_argument("--tau", type=float, default=1e-3, help='Soft Update interpolation parameter')
+    parser.add_argument("--results_dir", type=Path, default='results/1_agent_env', help='Results dir')
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args(args)
     return args
@@ -38,7 +38,7 @@ def create_and_parse_args(args=None):
 if __name__ == '__main__':
     args = create_and_parse_args()
 
-    env = UnityEnvironment(file_name=ENV_PATH)
+    env = UnityEnvironment(file_name=ENV_PATH, seed=2)
     # get the default brain
     brain_name = env.brain_names[0]
     brain = env.brains[brain_name]
