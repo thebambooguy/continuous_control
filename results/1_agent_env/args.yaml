@@ -1,0 +1,11 @@
+actor_lr: 0.0002
+batch_size: 256
+buffer_size: 10000000
+critic_lr: 0.0002
+gamma: 0.99
+max_t: 1500
+n_iterations: 3000
+results_dir: 'results/1_agent_env'
+seed: 0
+tau: 0.001
+weight_decay: 0
