@@ -45,7 +45,6 @@ When it comes to solving the environment, there are two options based on chosen 
 - **Step 2** - Build the Unity Environment 
   - Download the environment:
     - [One Agent](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Linux.zip)
-  
   - Unzip the environment and copy it to the main folder of the project. Note that provided environment will work only on Linux based machines!
 - **Step 3** - Check `main.py` and familiarize yourself with arguments and hyper-parameters.
 - **Step 4** - Run `main.py`

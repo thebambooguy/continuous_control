@@ -27,8 +27,8 @@ Following values of hyperparameters were chosen:
 - mu: 0.
 - theta: 0.15
 - sigma: 0.1
-- fc1_units=256
-- fc2_units=128
+- fc1_units: 256
+- fc2_units: 128
 
 ## Plot of rewards
 
@@ -41,8 +41,8 @@ rewards can be found below.
 
 I was able to solve the environment quicker than 641 episodes with use of this [code](https://github.com/udacity/deep-reinforcement-learning/blob/master/ddpg-pendulum/ddpg_agent.py).
 I did not change anything, just copied the code and ran it in my virtual machine - the agent needed only 137 episodes. 
-I found it strange that the same code and the same hyperparameters resulted in different average scores. Moreover, I managed
-to solve the One Agent environment only after setting `seed` in UnityEnvironment method to `2`.
+I found it strange that the same code and the same hyperparameters resulted in different average scores. 
+Moreover, I managed to solve the One Agent environment only after setting `seed` in UnityEnvironment method to `2`.
 
 ## Ideas for future work
 - Improving DDPG via **Prioritized Experience Replay**
